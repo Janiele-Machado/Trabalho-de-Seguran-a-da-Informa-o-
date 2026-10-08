@@ -20,8 +20,6 @@
 10. [Checklist de requisitos do trabalho](#10-checklist-de-requisitos-do-trabalho)
 11. [Problemas comuns](#11-problemas-comuns-e-soluções)
 12. [Limitações e melhorias futuras](#12-limitações-e-melhorias-futuras)
-13. [Histórico de commits](#13-histórico-de-commits-sugerido)
-
 ---
 
 ## 1. Resumo do projeto
