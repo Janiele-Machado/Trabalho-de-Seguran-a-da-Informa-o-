@@ -87,13 +87,3 @@ docker compose ps        # firewall = healthy
 
 **Contraprova:** `docker compose stop firewall` derruba toda a comunicação entre redes, provando que ele é o único caminho.
 
-## 5. Plano de commits sugerido
-1. `chore: estrutura inicial e .gitignore`
-2. `feat: redes segmentadas e firewall base no compose`
-3. `feat: regras iptables com politica DROP`
-4. `feat: portal Nginx e API na DMZ web`
-5. `feat: banco e cofre na DMZ dados`
-6. `feat: clientes (editor e autor externo) com rotas`
-7. `test: script de validacao positiva/negativa`
-8. `feat: logs LOGDROP e anti-spoofing`
-9. `docs: README e relatorio tecnico`
