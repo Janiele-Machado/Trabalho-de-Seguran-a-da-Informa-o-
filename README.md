@@ -2,7 +2,7 @@
 
 > **Trabalho de Segurança da Informação**: infraestrutura de rede segmentada e segura, simulada integralmente com **Docker Compose**.
 >
-> **Aluno(a):** `[seu nome]` · **Curso/Turma:** `[curso]` · **Professor(a):** `[nome]`
+> **Aluna:** `Janiele de Farias Machado` 
 
 ---
 
