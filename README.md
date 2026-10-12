@@ -176,7 +176,7 @@ Os clientes **não falam com o IP do servidor**: falam com o **IP do próprio fi
 
 ## 5. Matriz de regras do firewall
 
-Política padrão: **INPUT = DROP · FORWARD = DROP · OUTPUT = DROP**. Tudo o que está abaixo foi liberado ou bloqueado de forma explícita em [`firewall/regras/firewall.sh`](firewall/regras/firewall.sh).
+Política padrão: **INPUT = DROP · FORWARD = DROP · OUTPUT = DROP**. Tudo o que está abaixo foi liberado ou bloqueado de forma explícita em [`firewall/regras/firewall.sh`](editora-pergaminho/firewall/regras/firewall.sh).
 
 | ID | Origem | Destino | Porta / Protocolo | Ação | Justificativa de negócio |
 |---|---|---|---|---|---|
@@ -513,4 +513,4 @@ editora-pergaminho/
 ---
 
 
-<p align="center">Feito por Janiele</p>
+<p align="center">Feito por Janiele <3 </p>
