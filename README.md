@@ -235,9 +235,8 @@ docker compose ps
 
 > O requisito do trabalho pede `docker compose up -d`. O `--build` apenas garante que as imagens do firewall e dos clientes sejam construídas na primeira execução.
 
-**Resultado esperado:** 7 serviços `Up`, e o `firewall` com status **`(healthy)`**.
+<img width="944" height="178" alt="image" src="https://github.com/user-attachments/assets/a2313bb7-4a46-4294-845a-786df9dd2854" />
 
-> 📸 **PRINT 1:** saída de `docker compose ps` com os 7 serviços no ar e o firewall `healthy`.
 
 ### 6.3 Desligando
 
@@ -249,11 +248,7 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 
 ## 7. Metodologia de testes e validação
 
-> 💡 **Dica para PowerShell/Windows:** comandos com aspas ficam chatos de digitar. O jeito mais fácil é **entrar no container** e digitar lá dentro:
-> ```
-> docker compose exec estacao-editor sh
-> ```
-> Para sair, digite `exit`.
+Atenção (Windows/PowerShell): iptables, ip route, nmap, curl... existem só dentro dos containers. Todo comando começa com docker compose exec <container>.
 
 ### 7.0 Preparação: provas de que o ambiente está certo
 
@@ -261,14 +256,22 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 |---|---|---|---|
 | 0.1 | `docker network ls --filter name=editora` | As 4 redes bridge existem | `rede_editores`, `rede_autores`, `dmz_web`, `dmz_dados` |
 | 0.2 | `docker compose exec firewall cat /proc/sys/net/ipv4/ip_forward` | Encaminhamento de pacotes ligado | `1` |
-| 0.3 | `docker compose exec firewall iptables -S \| grep -- "-P"` | Política DROP por padrão | `-P INPUT DROP`, `-P FORWARD DROP`, `-P OUTPUT DROP` |
+| 0.3 | `docker compose exec firewall iptables -S` | Política DROP por padrão | `-P INPUT DROP`, `-P FORWARD DROP`, `-P OUTPUT DROP` |
 | 0.4 | `docker compose exec estacao-editor ip route` | Rotas para a DMZ passam pelo firewall | linhas `via 10.88.10.254` |
 | 0.5 | `docker compose exec firewall iptables -L FORWARD -n -v --line-numbers` | Regras R0 a R12 carregadas (contadores zerados) | 20 linhas de regra |
 
-> 📸 **PRINT 2:** `docker network ls --filter name=editora`
-> 📸 **PRINT 3:** `ip_forward` = 1 **e** as políticas `-P ... DROP` (pode ser no mesmo print)
-> 📸 **PRINT 4:** `iptables -L FORWARD -n -v --line-numbers` **antes dos testes** (contadores em 0)
-> 📸 **PRINT 5:** `ip route` da estação do editor (rotas passando pelo firewall) e, junto, `docker compose exec firewall iptables -t nat -L PREROUTING -n` (as 8 regras de DNAT)
+<img width="912" height="89" alt="image" src="https://github.com/user-attachments/assets/767ef984-a182-4a8b-9e83-3c4ef7ef93b3" />
+
+<img width="935" height="41" alt="image" src="https://github.com/user-attachments/assets/281f446c-88c0-4b2a-ba1f-dc426805c54f" />
+
+<img width="952" height="426" alt="image" src="https://github.com/user-attachments/assets/86f28bb4-8894-426c-8998-792604c862e9" />
+
+<img width="943" height="283" alt="image" src="https://github.com/user-attachments/assets/377a60b1-df11-4723-8ca9-e8bf93b7d4fa" />
+
+<img width="819" height="60" alt="image" src="https://github.com/user-attachments/assets/29dc27b9-5e93-47a2-89b5-901634154a37" />
+
+<img width="918" height="133" alt="image" src="https://github.com/user-attachments/assets/58f4643e-5da4-4810-9dc0-f76a8914b228" />
+
 
 ---
 
@@ -286,9 +289,12 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 
 > `portal-web` e `api-editorial` são apelidos que apontam para o IP do firewall (`10.88.10.254` para o editor, `10.88.40.254` para o autor).
 
-> 📸 **PRINT 6:** P1, P2 e P3 no mesmo terminal (editor acessando o portal e a API)
-> 📸 **PRINT 7:** P4 (manuscrito lido **com** token) e, logo abaixo, a mesma chamada **sem** token, que retorna `{"erro": "token invalido"}`
-> 📸 **PRINT 8:** P6 e P7 (autor acessando o portal e enviando a proposta)
+<img width="954" height="133" alt="image" src="https://github.com/user-attachments/assets/ab0d9235-dd87-4fa6-93b3-a72ca80ce820" />
+
+<img width="956" height="246" alt="image" src="https://github.com/user-attachments/assets/d8b1ff94-dc7c-461a-bd8c-e4e3acf8721f" />
+
+<img width="946" height="72" alt="image" src="https://github.com/user-attachments/assets/dc999b91-7984-4ac9-b63f-63bd8d7cf078" />
+
 
 ---
 
@@ -308,10 +314,13 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 | **N10** | Portal tenta alcançar a LAN | `docker compose exec portal-web wget -T 3 -qO- http://10.88.10.10` | falha (sem rota) | R10 (defesa extra) |
 | **N11** | Editor tenta **contornar** o firewall (IP interno do banco) | `docker compose exec estacao-editor nc -zv -w 3 10.88.30.10 5432` | *timeout* | isolamento de rede |
 
-> 📸 **PRINT 9:** N1 (o `nmap` mostrando `5432/tcp filtered`): **o print mais importante do trabalho**
-> 📸 **PRINT 10:** N3 e N4 (timeouts do cofre e da API direta)
-> 📸 **PRINT 11:** N6 (ping com 100% de perda) e N9 (só a porta 80 aberta)
-> 📸 **PRINT 12:** N7/N8 retornando `403`
+<img width="934" height="119" alt="image" src="https://github.com/user-attachments/assets/02794d20-5855-4640-aa0a-8229a70aad63" />
+
+<img width="947" height="187" alt="image" src="https://github.com/user-attachments/assets/cf0a99af-0bd5-4fdb-9f75-b79c6ba473ed" />
+
+<img width="944" height="329" alt="image" src="https://github.com/user-attachments/assets/ebd20272-5dd4-4a5a-864b-bfa4c4140c20" />
+
+
 
 #### 📖 Como interpretar o `nmap`
 
@@ -325,27 +334,18 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 
 ### 7.3 📊 Evidência: contadores do firewall
 
-Depois dos testes negativos, mostre que **o firewall realmente descartou os pacotes**:
 
 ```bash
 docker compose exec firewall iptables -L FORWARD -n -v --line-numbers
 ```
+**Antes:**
 
-**Resultado esperado:** as linhas das regras **R5, R6 e R7** (DROP) com valores **maiores que 0** na coluna `pkts`, e as de ACCEPT (**R1, R2 e R3**) também com tráfego, vindo dos testes positivos. As regras R8, R9, R10 e R12 podem continuar em 0, porque nenhum teste tenta chegar nelas.
+<img width="943" height="283" alt="image" src="https://github.com/user-attachments/assets/377a60b1-df11-4723-8ca9-e8bf93b7d4fa" />
 
-> 📸 **PRINT 13:** a tabela de contadores **depois** dos testes, ao lado do PRINT 4 (antes). A diferença entre os dois comprova que o firewall está filtrando.
->
-> ⚠️ Se **todos** os contadores continuarem em `0`, o tráfego não está passando pelo firewall. Veja [Problemas comuns](#11-problemas-comuns-e-soluções).
 
-#### (Opcional) Logs de bloqueio `FW-DROP`
+**Depois:**(**o firewall realmente descartou os pacotes**)
+<img width="947" height="306" alt="image" src="https://github.com/user-attachments/assets/b0249af9-5df3-45ad-979a-74db573b2b2d" />
 
-Em **Linux** (host real), habilite o log por namespace e acompanhe:
-
-```bash
-sudo sysctl -w net.netfilter.nf_log_all_netns=1
-sudo dmesg -w | grep FW-DROP
-```
-> No Docker Desktop (Windows/macOS) o log de kernel fica dentro da VM do Docker; use os **contadores** acima como evidência.
 
 ---
 
@@ -355,11 +355,8 @@ sudo dmesg -w | grep FW-DROP
 bash testes/validar.sh
 ```
 
-O script executa **7 testes positivos + 11 negativos + 6 conferências de contadores** (as regras R1, R2, R3, R5, R6 e R7 precisam ter contado pacotes). Imprime `[PASS]`/`[FAIL]` e mostra a tabela do firewall ao final.
+<img width="545" height="407" alt="image" src="https://github.com/user-attachments/assets/488f50ec-497b-4c99-82ea-9d6128e6665c" />
 
-**Resultado esperado:** `Resultado: 24 passaram, 0 falharam.`
-
-> 📸 **PRINT 14:** a saída completa do `validar.sh` com o placar final (24 passando).
 
 ---
 
