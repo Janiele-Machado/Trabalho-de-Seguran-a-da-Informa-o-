@@ -235,9 +235,8 @@ docker compose ps
 
 > O requisito do trabalho pede `docker compose up -d`. O `--build` apenas garante que as imagens do firewall e dos clientes sejam construídas na primeira execução.
 
-**Resultado esperado:** 7 serviços `Up`, e o `firewall` com status **`(healthy)`**.
+<img width="944" height="178" alt="image" src="https://github.com/user-attachments/assets/a2313bb7-4a46-4294-845a-786df9dd2854" />
 
-> 📸 **PRINT 1:** saída de `docker compose ps` com os 7 serviços no ar e o firewall `healthy`.
 
 ### 6.3 Desligando
 
