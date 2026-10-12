@@ -314,10 +314,13 @@ Atenção (Windows/PowerShell): iptables, ip route, nmap, curl... existem só de
 | **N10** | Portal tenta alcançar a LAN | `docker compose exec portal-web wget -T 3 -qO- http://10.88.10.10` | falha (sem rota) | R10 (defesa extra) |
 | **N11** | Editor tenta **contornar** o firewall (IP interno do banco) | `docker compose exec estacao-editor nc -zv -w 3 10.88.30.10 5432` | *timeout* | isolamento de rede |
 
-> 📸 **PRINT 9:** N1 (o `nmap` mostrando `5432/tcp filtered`): **o print mais importante do trabalho**
-> 📸 **PRINT 10:** N3 e N4 (timeouts do cofre e da API direta)
-> 📸 **PRINT 11:** N6 (ping com 100% de perda) e N9 (só a porta 80 aberta)
-> 📸 **PRINT 12:** N7/N8 retornando `403`
+<img width="934" height="119" alt="image" src="https://github.com/user-attachments/assets/02794d20-5855-4640-aa0a-8229a70aad63" />
+
+<img width="947" height="187" alt="image" src="https://github.com/user-attachments/assets/cf0a99af-0bd5-4fdb-9f75-b79c6ba473ed" />
+
+<img width="944" height="329" alt="image" src="https://github.com/user-attachments/assets/ebd20272-5dd4-4a5a-864b-bfa4c4140c20" />
+
+
 
 #### 📖 Como interpretar o `nmap`
 
@@ -331,27 +334,18 @@ Atenção (Windows/PowerShell): iptables, ip route, nmap, curl... existem só de
 
 ### 7.3 📊 Evidência: contadores do firewall
 
-Depois dos testes negativos, mostre que **o firewall realmente descartou os pacotes**:
 
 ```bash
 docker compose exec firewall iptables -L FORWARD -n -v --line-numbers
 ```
+**Antes:**
 
-**Resultado esperado:** as linhas das regras **R5, R6 e R7** (DROP) com valores **maiores que 0** na coluna `pkts`, e as de ACCEPT (**R1, R2 e R3**) também com tráfego, vindo dos testes positivos. As regras R8, R9, R10 e R12 podem continuar em 0, porque nenhum teste tenta chegar nelas.
+<img width="943" height="283" alt="image" src="https://github.com/user-attachments/assets/377a60b1-df11-4723-8ca9-e8bf93b7d4fa" />
 
-> 📸 **PRINT 13:** a tabela de contadores **depois** dos testes, ao lado do PRINT 4 (antes). A diferença entre os dois comprova que o firewall está filtrando.
->
-> ⚠️ Se **todos** os contadores continuarem em `0`, o tráfego não está passando pelo firewall. Veja [Problemas comuns](#11-problemas-comuns-e-soluções).
 
-#### (Opcional) Logs de bloqueio `FW-DROP`
+**Depois:**(**o firewall realmente descartou os pacotes**)
+<img width="947" height="306" alt="image" src="https://github.com/user-attachments/assets/b0249af9-5df3-45ad-979a-74db573b2b2d" />
 
-Em **Linux** (host real), habilite o log por namespace e acompanhe:
-
-```bash
-sudo sysctl -w net.netfilter.nf_log_all_netns=1
-sudo dmesg -w | grep FW-DROP
-```
-> No Docker Desktop (Windows/macOS) o log de kernel fica dentro da VM do Docker; use os **contadores** acima como evidência.
 
 ---
 
@@ -361,11 +355,8 @@ sudo dmesg -w | grep FW-DROP
 bash testes/validar.sh
 ```
 
-O script executa **7 testes positivos + 11 negativos + 6 conferências de contadores** (as regras R1, R2, R3, R5, R6 e R7 precisam ter contado pacotes). Imprime `[PASS]`/`[FAIL]` e mostra a tabela do firewall ao final.
+<img width="545" height="407" alt="image" src="https://github.com/user-attachments/assets/488f50ec-497b-4c99-82ea-9d6128e6665c" />
 
-**Resultado esperado:** `Resultado: 24 passaram, 0 falharam.`
-
-> 📸 **PRINT 14:** a saída completa do `validar.sh` com o placar final (24 passando).
 
 ---
 
