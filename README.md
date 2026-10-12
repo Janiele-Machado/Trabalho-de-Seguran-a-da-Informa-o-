@@ -248,11 +248,7 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 
 ## 7. Metodologia de testes e validação
 
-> 💡 **Dica para PowerShell/Windows:** comandos com aspas ficam chatos de digitar. O jeito mais fácil é **entrar no container** e digitar lá dentro:
-> ```
-> docker compose exec estacao-editor sh
-> ```
-> Para sair, digite `exit`.
+Atenção (Windows/PowerShell): iptables, ip route, nmap, curl... existem só dentro dos containers. Todo comando começa com docker compose exec <container>.
 
 ### 7.0 Preparação: provas de que o ambiente está certo
 
@@ -260,14 +256,22 @@ docker compose down -v      # desliga e apaga volumes (banco volta ao zero)
 |---|---|---|---|
 | 0.1 | `docker network ls --filter name=editora` | As 4 redes bridge existem | `rede_editores`, `rede_autores`, `dmz_web`, `dmz_dados` |
 | 0.2 | `docker compose exec firewall cat /proc/sys/net/ipv4/ip_forward` | Encaminhamento de pacotes ligado | `1` |
-| 0.3 | `docker compose exec firewall iptables -S \| grep -- "-P"` | Política DROP por padrão | `-P INPUT DROP`, `-P FORWARD DROP`, `-P OUTPUT DROP` |
+| 0.3 | `docker compose exec firewall iptables -S` | Política DROP por padrão | `-P INPUT DROP`, `-P FORWARD DROP`, `-P OUTPUT DROP` |
 | 0.4 | `docker compose exec estacao-editor ip route` | Rotas para a DMZ passam pelo firewall | linhas `via 10.88.10.254` |
 | 0.5 | `docker compose exec firewall iptables -L FORWARD -n -v --line-numbers` | Regras R0 a R12 carregadas (contadores zerados) | 20 linhas de regra |
 
-> 📸 **PRINT 2:** `docker network ls --filter name=editora`
-> 📸 **PRINT 3:** `ip_forward` = 1 **e** as políticas `-P ... DROP` (pode ser no mesmo print)
-> 📸 **PRINT 4:** `iptables -L FORWARD -n -v --line-numbers` **antes dos testes** (contadores em 0)
-> 📸 **PRINT 5:** `ip route` da estação do editor (rotas passando pelo firewall) e, junto, `docker compose exec firewall iptables -t nat -L PREROUTING -n` (as 8 regras de DNAT)
+<img width="912" height="89" alt="image" src="https://github.com/user-attachments/assets/767ef984-a182-4a8b-9e83-3c4ef7ef93b3" />
+
+<img width="935" height="41" alt="image" src="https://github.com/user-attachments/assets/281f446c-88c0-4b2a-ba1f-dc426805c54f" />
+
+<img width="952" height="426" alt="image" src="https://github.com/user-attachments/assets/86f28bb4-8894-426c-8998-792604c862e9" />
+
+<img width="943" height="283" alt="image" src="https://github.com/user-attachments/assets/377a60b1-df11-4723-8ca9-e8bf93b7d4fa" />
+
+<img width="819" height="60" alt="image" src="https://github.com/user-attachments/assets/29dc27b9-5e93-47a2-89b5-901634154a37" />
+
+<img width="918" height="133" alt="image" src="https://github.com/user-attachments/assets/58f4643e-5da4-4810-9dc0-f76a8914b228" />
+
 
 ---
 
