@@ -289,9 +289,12 @@ Atenção (Windows/PowerShell): iptables, ip route, nmap, curl... existem só de
 
 > `portal-web` e `api-editorial` são apelidos que apontam para o IP do firewall (`10.88.10.254` para o editor, `10.88.40.254` para o autor).
 
-> 📸 **PRINT 6:** P1, P2 e P3 no mesmo terminal (editor acessando o portal e a API)
-> 📸 **PRINT 7:** P4 (manuscrito lido **com** token) e, logo abaixo, a mesma chamada **sem** token, que retorna `{"erro": "token invalido"}`
-> 📸 **PRINT 8:** P6 e P7 (autor acessando o portal e enviando a proposta)
+<img width="954" height="133" alt="image" src="https://github.com/user-attachments/assets/ab0d9235-dd87-4fa6-93b3-a72ca80ce820" />
+
+<img width="956" height="246" alt="image" src="https://github.com/user-attachments/assets/d8b1ff94-dc7c-461a-bd8c-e4e3acf8721f" />
+
+<img width="946" height="72" alt="image" src="https://github.com/user-attachments/assets/dc999b91-7984-4ac9-b63f-63bd8d7cf078" />
+
 
 ---
 
