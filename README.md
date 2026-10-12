@@ -456,7 +456,6 @@ editora-pergaminho/
 ├── testes/validar.sh
 └── docs/
     ├── RELATORIO.md
-    └── prints/                 # evidências (screenshots)
 ```
 
 ---
@@ -507,13 +506,11 @@ editora-pergaminho/
 - **Autenticação de usuários** no portal e no painel (hoje há apenas um token de API).
 - **IDS/IPS (Suricata):** gerar alertas de varredura em tempo real.
 - **IP de origem nos logs dos servidores:** a DMZ enxerga o IP do firewall por causa do NAT (`MASQUERADE`).
-- **Regras R4, R8, R9 e R10** existem como defesa em profundidade, mas não são exercitadas pelos testes, pois a topologia do Docker já impede esses caminhos (sem rota). Os contadores delas ficam em 0.
 - **nftables:** migrar as regras do `iptables` para o `nftables`.
 - **Centralização de logs** (ex.: Loki/Grafana) para auditoria contínua.
 - **Cliente com `NET_ADMIN`:** usado apenas para instalar rotas (papel do DHCP); em produção isso não seria necessário.
 
 ---
-
 
 
 <p align="center">Feito por Janiele</p>
