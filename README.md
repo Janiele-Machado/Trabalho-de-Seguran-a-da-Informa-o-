@@ -370,35 +370,9 @@ docker compose exec estacao-editor curl -sS -m 3 http://portal-web/     # deve F
 docker compose start firewall                                            # religa
 ```
 
-**Resultado esperado:** com o firewall desligado, **nada** se comunica; ao religar, volta a funcionar.
+<img width="959" height="375" alt="image" src="https://github.com/user-attachments/assets/d296aa75-69e6-41ec-bff4-e6f95a68f4c3" />
 
-> 📸 **PRINT 15:** o `curl` falhando com o firewall parado.
 
----
-
-### 7.6 📋 Resumo dos prints sugeridos
-
-| Print | O que mostrar | Seção do relatório |
-|---|---|---|
-| 1 | `docker compose ps` (7 serviços, firewall healthy) | Execução |
-| 2 | `docker network ls` (4 redes) | Arquitetura |
-| 3 | `ip_forward = 1` e políticas DROP | Firewall |
-| 4 | Regras R0 a R12 com contadores zerados | Matriz de regras |
-| 5 | `ip route` do cliente | Isolamento |
-| 6 | P1, P2, P3 (editor acessando portal/API) | Testes positivos |
-| 7 | P4 com e sem token | Testes positivos |
-| 8 | P6, P7 (autor no portal) | Testes positivos |
-| 9 | **N1: nmap `filtered` no banco** | Testes negativos |
-| 10 | N3, N4 (timeouts) | Testes negativos |
-| 11 | N6, N9 (ping perdido, só porta 80 aberta) | Testes negativos |
-| 12 | N7, N8 (403) | Testes negativos |
-| 13 | Contadores **depois** dos testes | Evidência |
-| 14 | `validar.sh` com 24 passando | Validação |
-| 15 | Contraprova (firewall parado) | Validação |
-| 16 | `git log --oneline --graph` | Repositório |
-| 17 | Conteúdo do `docker-compose.yml` (redes e `cap_add`) | Código |
-
-> 💾 Sugestão: salve os prints em `docs/prints/` com nomes como `01-compose-ps.png`, `09-nmap-filtered-db.png` e referencie no relatório.
 
 ---
 
