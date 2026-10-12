@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editora Pergaminho | Portal de Submissão</title>
+  <style>
+    body{font-family:Georgia,serif;max-width:640px;margin:3rem auto;padding:0 1rem;background:#faf6ee;color:#2b2118}
+    h1{border-bottom:2px solid #8a5a2b;padding-bottom:.5rem}
+    input,textarea,button{width:100%;padding:.6rem;margin:.4rem 0;font:inherit;box-sizing:border-box}
+    button{background:#8a5a2b;color:#fff;border:0;cursor:pointer}
+    pre{background:#efe6d3;padding:1rem;overflow:auto}
+  </style>
+</head>
+<body>
+  <h1>📚 Editora Pergaminho</h1>
+  <p>Portal de submissão de originais. Seus arquivos são tratados em ambiente segregado.</p>
+  <input id="titulo" placeholder="Título da obra">
+  <textarea id="sinopse" rows="4" placeholder="Sinopse"></textarea>
+  <button onclick="enviar()">Enviar proposta</button>
+  <pre id="saida">Aguardando envio...</pre>
+  <script>
+    async function enviar(){
+      const r = await fetch('/api/submissao',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({titulo:titulo.value,sinopse:sinopse.value})});
+      saida.textContent = r.status + '\n' + await r.text();
+    }
+  </script>
+</body>
+</html>

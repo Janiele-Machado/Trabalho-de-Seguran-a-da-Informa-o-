@@ -1,0 +1,138 @@
+name: editora-pergaminho
+
+# Topologia (todas as redes sao bridge + internal: sem saida para a internet)
+#
+#  autor-externo ── rede_autores ──┐
+#                                  ├── FIREWALL ── dmz_web   ── portal-web, api
+#  estacao-editor ─ rede_editores ─┘            └── dmz_dados ── api, db, cofre
+#
+# Os clientes acessam os servicos pelo IP do proprio firewall (DNAT: 80, 5000, 5432, 8080).
+# O firewall e o UNICO elo entre as redes. A api e o unico servico que
+# pertence a duas redes (dmz_web e dmz_dados), funcionando como ponte controlada.
+
+services:
+  # ───────────────────────── FIREWALL / GATEWAY ─────────────────────────
+  firewall:
+    build: ./firewall
+    hostname: firewall
+    cap_add: [NET_ADMIN]
+    sysctls:
+      net.ipv4.ip_forward: "1"
+    volumes:
+      - ./firewall/regras:/etc/firewall:ro
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/firewall.ready"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    restart: unless-stopped
+    networks:
+      rede_editores: { ipv4_address: 10.88.10.254 }
+      rede_autores:  { ipv4_address: 10.88.40.254 }
+      dmz_web:       { ipv4_address: 10.88.20.254 }
+      dmz_dados:     { ipv4_address: 10.88.30.254 }
+
+  # ───────────────────────── REDES DE CLIENTES ─────────────────────────
+  estacao-editor:
+    build: ./cliente
+    image: editora/cliente:latest
+    hostname: estacao-editor
+    cap_add: [NET_ADMIN]   # somente para instalar as rotas (simula o DHCP)
+    environment:
+      FW_GW: 10.88.10.254
+      ROTAS: "10.88.20.0/24 10.88.30.0/24 10.88.40.0/24"
+    extra_hosts:
+      - "portal-web:10.88.10.254"       # o cliente fala com o IP do firewall (DNAT)
+      - "api-editorial:10.88.10.254"
+    depends_on:
+      firewall: { condition: service_healthy }
+    networks:
+      rede_editores: { ipv4_address: 10.88.10.10 }
+
+  autor-externo:
+    build: ./cliente
+    image: editora/cliente:latest
+    hostname: autor-externo
+    cap_add: [NET_ADMIN]
+    environment:
+      FW_GW: 10.88.40.254
+      ROTAS: "10.88.20.0/24 10.88.30.0/24 10.88.10.0/24"
+    extra_hosts:
+      - "portal-web:10.88.40.254"
+    depends_on:
+      firewall: { condition: service_healthy }
+    networks:
+      rede_autores: { ipv4_address: 10.88.40.10 }
+
+  # ───────────────────────── DMZ WEB ─────────────────────────
+  portal-web:
+    image: nginx:1.27-alpine
+    hostname: portal-web
+    volumes:
+      - ./portal/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./portal/html:/usr/share/nginx/html:ro
+    depends_on: [api]
+    restart: unless-stopped
+    networks:
+      dmz_web: { ipv4_address: 10.88.20.10 }
+
+  api:
+    image: python:3.12-alpine
+    hostname: api
+    command: ["python", "-u", "/app/app.py"]
+    environment:
+      API_TOKEN: ${API_TOKEN:-troque-este-token}
+      DB_HOST: db
+      COFRE_URL: http://cofre
+    volumes:
+      - ./api:/app:ro
+    depends_on: [db, cofre]
+    restart: unless-stopped
+    networks:
+      dmz_web:   { ipv4_address: 10.88.20.20 }
+      dmz_dados: { ipv4_address: 10.88.30.5 }
+
+  # ───────────────────────── DMZ DADOS (cofre) ─────────────────────────
+  db:
+    image: postgres:16-alpine
+    hostname: db
+    environment:
+      POSTGRES_DB: editora
+      POSTGRES_USER: editora
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-troque_esta_senha}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    networks:
+      dmz_dados: { ipv4_address: 10.88.30.10 }
+
+  cofre:
+    image: nginx:1.27-alpine
+    hostname: cofre
+    volumes:
+      - ./cofre/manuscritos:/usr/share/nginx/html:ro
+    restart: unless-stopped
+    networks:
+      dmz_dados: { ipv4_address: 10.88.30.20 }
+
+volumes:
+  db_data:
+
+networks:
+  rede_editores:
+    driver: bridge
+    internal: true
+    ipam: { config: [{ subnet: 10.88.10.0/24 }] }
+  rede_autores:
+    driver: bridge
+    internal: true
+    ipam: { config: [{ subnet: 10.88.40.0/24 }] }
+  dmz_web:
+    driver: bridge
+    internal: true
+    ipam: { config: [{ subnet: 10.88.20.0/24 }] }
+  dmz_dados:
+    driver: bridge
+    internal: true
+    ipam: { config: [{ subnet: 10.88.30.0/24 }] }

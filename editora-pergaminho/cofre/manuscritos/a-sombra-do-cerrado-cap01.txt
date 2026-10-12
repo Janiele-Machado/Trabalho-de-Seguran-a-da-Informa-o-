@@ -1,0 +1,6 @@
+[CONFIDENCIAL - EMBARGO ATE 2027-03-15]
+A Sombra do Cerrado - Livro 3 - Capitulo 1
+(texto ficticio de demonstracao)
+
+FLAG{o-manuscrito-vazou}
+Se voce leu esta linha fora da API autenticada, o firewall falhou.
