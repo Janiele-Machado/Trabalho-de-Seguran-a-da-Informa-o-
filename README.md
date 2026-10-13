@@ -19,7 +19,6 @@
 9. [Estrutura do repositório](#9-estrutura-do-repositório)
 10. [Checklist de requisitos do trabalho](#10-checklist-de-requisitos-do-trabalho)
 11. [Problemas comuns](#11-problemas-comuns-e-soluções)
-12. [Limitações e melhorias futuras](#12-limitações-e-melhorias-futuras)
 ---
 
 ## 1. Resumo do projeto
@@ -497,18 +496,6 @@ editora-pergaminho/
 | Mudei o `.env` e nada mudou | Container usa o valor antigo | `docker compose up -d --force-recreate` |
 
 > ⚠️ **Interpretando os testes negativos:** um bloqueio só vale como **prova** se os testes positivos funcionam (a rede está de pé) **e** os contadores das regras de DROP aumentam. Sem isso, "bloqueado" pode significar apenas "sem conexão".
-
----
-
-## 12. Limitações e melhorias futuras
-
-- **TLS/HTTPS:** a simulação usa HTTP (porta 80). Em produção: certificado e porta 443.
-- **Autenticação de usuários** no portal e no painel (hoje há apenas um token de API).
-- **IDS/IPS (Suricata):** gerar alertas de varredura em tempo real.
-- **IP de origem nos logs dos servidores:** a DMZ enxerga o IP do firewall por causa do NAT (`MASQUERADE`).
-- **nftables:** migrar as regras do `iptables` para o `nftables`.
-- **Centralização de logs** (ex.: Loki/Grafana) para auditoria contínua.
-- **Cliente com `NET_ADMIN`:** usado apenas para instalar rotas (papel do DHCP); em produção isso não seria necessário.
 
 ---
 
