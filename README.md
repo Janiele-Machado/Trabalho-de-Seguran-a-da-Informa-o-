@@ -477,7 +477,6 @@ editora-pergaminho/
 | Seção 2: Diagnóstico atual vs. proposta | ✅ | [Seção 3](#3-diagnóstico-cenário-atual-vs-proposta) |
 | Seção 3: Matriz de regras | ✅ | [Seção 5](#5-matriz-de-regras-do-firewall) |
 | Seção 4: Metodologia de testes (positivos e negativos) | ✅ | [Seção 7](#7-metodologia-de-testes-e-validação) |
-| Git com commits organizados | 🔲 | [Seção 13](#13-histórico-de-commits-sugerido) |
 | README com `docker compose up -d` | ✅ | [Seção 6](#6-como-executar-passo-a-passo) |
 
 ---
